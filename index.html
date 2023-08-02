@@ -7,14 +7,119 @@
 
   <!-- CSS -->
   <style>
+    :root {
+      --bColor: #333;
+      --color: #ddd;
+    }
+
+    html, body { height: 100%; }
+    body {
+      display: flex;
+      flex-direction: column;
+
+      justify-content: center;
+      align-items: center;
+
+      background-color: var(--bColor);
+      color: var(--color);
+      font-family: 'Courier New', Courier, monospace;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      align-items: center;
+    }
+    input {
+      padding: 4px 4px 1px 4px;
+      width: 40px;
+      font-size: 24px;
+      border: 1px solid var(--color);
+      color: var(--color);
+      background-color: var(--bColor);
+    }
+    button {
+      color: var(--color);
+      background-color: var(--bColor);
+      font-size: 16px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .hidden { display: none; }
+
+    /* Hide number input arrows */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   </style>
 
-  <!-- JS -->
-  <script>
-  </script>
 </head>
 
 <body>
+
+  <form id="waitForm">
+    <div>How many seconds would you like to wait?</div>
+    <input type="number" min="1" max="999" value="999">
+    <button type="submit">Wait</button>
+  </form>
+
+  <div id="waitTime" class="hidden"></div>
+
 </body>
 
+<!-- JS -->
+<script>
+function flipHidden() {
+  let elements = [waitForm, waitTime];
+  // Hide form.
+  for (const el of elements)
+    if (el.classList.contains("hidden"))
+      el.classList.remove("hidden");
+    else
+      el.classList.add("hidden");
+}
+
+function updateWaitTime() {
+  waitTime.innerHTML = time != 0 ? time : '🎉';
+}
+
+function countdown() {
+  if (time >= 0) {
+    updateWaitTime();
+    time--;
+    console.log(time);
+    setTimeout(countdown, 1000);
+  }
+  else if (time = -1) {
+    // Reset view.
+    flipHidden();
+  }
+  else
+    console.log("done");
+}
+
+function start(event) {
+  // Classic ol' prevent default... Don't postback.
+  event.preventDefault();
+
+  // Switch views
+  flipHidden();
+
+  // Wait
+  time = parseInt(waitForm.querySelector('input').value);
+  countdown();
+}
+
+function init() {
+  waitForm.addEventListener('submit', start);
+}
+
+time = 0;
+waitForm = document.getElementById('waitForm');
+waitTime = document.getElementById('waitTime');
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </html>
